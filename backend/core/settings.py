@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -134,6 +135,14 @@ CORS_ALLOWED_ORIGINS = config(
     default="http://localhost:5173",
     cast=Csv(),
 )
+CORS_ALLOW_CREDENTIALS = True
+
+# CSRF — origens confiáveis (necessário em produção)
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="http://localhost:5173",
+    cast=Csv(),
+)
 
 # -------------------------------------------------------
 # Django REST Framework
@@ -188,3 +197,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # -------------------------------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104_857_600  # 100 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 104_857_600
+
+# -------------------------------------------------------
+# WhiteNoise — servir estáticos em produção sem Nginx
+# -------------------------------------------------------
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

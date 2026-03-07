@@ -7,8 +7,12 @@
 
 import axios from "axios";
 
+// Em produção, VITE_API_URL aponta para o backend no Render.
+// Em dev, o Vite proxy redireciona /api para localhost:8000.
+const API_BASE = import.meta.env.VITE_API_URL || "/api";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
 });
 
