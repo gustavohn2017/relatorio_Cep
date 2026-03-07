@@ -1,0 +1,35 @@
+# Django & REST Framework
+Django>=5.0,<6.0
+djangorestframework>=3.15,<4.0
+django-cors-headers>=4.3,<5.0
+djangorestframework-simplejwt>=5.3,<6.0
+
+# Data Processing
+pandas>=2.2,<3.0
+openpyxl>=3.1,<4.0
+xlrd>=2.0,<3.0
+
+# Google Sheets Integration
+google-api-python-client>=2.100,<3.0
+google-auth-httplib2>=0.2,<1.0
+google-auth-oauthlib>=1.2,<2.0
+gspread>=6.0,<7.0
+
+# File Parsing
+pdfplumber>=0.11,<1.0
+python-docx>=1.1,<2.0
+lxml>=5.1,<6.0
+
+# AI Analysis (Groq)
+groq>=0.9,<1.0
+
+# Charts
+matplotlib>=3.8,<4.0
+plotly>=5.18,<6.0
+
+# Utilities
+python-decouple>=3.8,<4.0
+celery>=5.3,<6.0
+redis>=5.0,<6.0
+Pillow>=10.0,<11.0
+gunicorn>=22.0,<23.0
