@@ -32,8 +32,7 @@ export default function RegisterPage() {
       navigate("/");
     } catch (err) {
       const data = err.response?.data;
-      if (data) {
-        // Monta mensagem a partir de erros de campo
+      if (data && typeof data === "object") {
         const msgs = Object.entries(data)
           .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
           .join(" | ");
