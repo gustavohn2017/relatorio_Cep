@@ -1,0 +1,31 @@
+# /etc/systemd/system/relatoriocep.service
+# Serviço systemd para o Gunicorn (Django backend)
+#
+# Copiar para: sudo cp gunicorn.service /etc/systemd/system/relatoriocep.service
+# Ativar:      sudo systemctl enable --now relatoriocep
+# Status:      sudo systemctl status relatoriocep
+# Logs:        sudo journalctl -u relatoriocep -f
+
+[Unit]
+Description=RelatorioCEP Django Backend (Gunicorn)
+After=network.target postgresql.service
+
+[Service]
+User=deploy
+Group=www-data
+WorkingDirectory=/home/deploy/relatoriocep/backend
+EnvironmentFile=/home/deploy/relatoriocep/backend/.env
+
+ExecStart=/home/deploy/relatoriocep/backend/venv/bin/gunicorn \
+    core.wsgi:application \
+    --bind 127.0.0.1:8000 \
+    --workers 3 \
+    --timeout 300 \
+    --access-logfile /var/log/relatoriocep/access.log \
+    --error-logfile /var/log/relatoriocep/error.log
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

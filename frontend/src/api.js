@@ -7,7 +7,7 @@
 
 import axios from "axios";
 
-// Em produção, VITE_API_URL aponta para o backend no Render.
+// Em produção (VPS), frontend e backend ficam no mesmo servidor.
 // Em dev, o Vite proxy redireciona /api para localhost:8000.
 const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
