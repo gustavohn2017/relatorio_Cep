@@ -23,9 +23,14 @@ export default function LoginPage() {
       await login(username, password);
       navigate("/");
     } catch (err) {
-      setError(
-        err.response?.data?.detail || "Credenciais inválidas. Tente novamente."
-      );
+      const data = err.response?.data;
+      if (data && typeof data === "object" && data.detail) {
+        setError(data.detail);
+      } else if (typeof data === "string" && data.includes("<html")) {
+        setError("Erro no servidor. Tente novamente mais tarde.");
+      } else {
+        setError("Credenciais inválidas. Tente novamente.");
+      }
     } finally {
       setLoading(false);
     }

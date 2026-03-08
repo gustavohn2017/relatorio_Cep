@@ -10,6 +10,8 @@ Endpoints:
   POST /api/auth/password-reset-confirm/ → Confirma nova senha
 """
 
+import logging
+
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_str
@@ -17,22 +19,39 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
 from django.conf import settings
 
-from rest_framework import generics, permissions, status
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import RegisterSerializer, ProfileSerializer
 
+logger = logging.getLogger(__name__)
+
 
 # -------------------------------------------------------
 # Registro
 # -------------------------------------------------------
-class RegisterView(generics.CreateAPIView):
+class RegisterView(APIView):
     """Cria uma nova conta de usuário."""
 
-    queryset = User.objects.all()
-    serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = serializer.save()
+            return Response(
+                {"id": user.id, "username": user.username, "email": user.email},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            logger.exception("Erro ao registrar usuário")
+            return Response(
+                {"detail": "Erro interno ao criar conta. Tente novamente."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 # -------------------------------------------------------
@@ -44,9 +63,16 @@ class MeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
+        try:
+            profile = request.user.profile
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.exception("Erro ao buscar perfil")
+            return Response(
+                {"detail": "Erro ao carregar perfil."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 # -------------------------------------------------------

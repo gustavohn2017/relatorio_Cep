@@ -32,11 +32,18 @@ export default function RegisterPage() {
       navigate("/");
     } catch (err) {
       const data = err.response?.data;
-      if (data && typeof data === "object") {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        // Erros de validação do DRF (campo: [mensagens])
         const msgs = Object.entries(data)
-          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
+          .map(([key, val]) => {
+            const label = key === "detail" ? "" : `${key}: `;
+            const msg = Array.isArray(val) ? val.join(", ") : String(val);
+            return `${label}${msg}`;
+          })
           .join(" | ");
         setError(msgs);
+      } else if (typeof data === "string" && data.includes("<html")) {
+        setError("Erro no servidor. Por favor, tente novamente mais tarde.");
       } else {
         setError("Erro ao cadastrar. Tente novamente.");
       }

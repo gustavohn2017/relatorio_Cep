@@ -14,7 +14,9 @@ After=network.target postgresql.service
 User=deploy
 Group=www-data
 WorkingDirectory=/home/deploy/relatoriocep/backend
-EnvironmentFile=/home/deploy/relatoriocep/backend/.env
+# NÃO usar EnvironmentFile — python-decouple lê o .env diretamente.
+# O EnvironmentFile do systemd corrompe valores com caracteres especiais.
+Environment="DJANGO_SETTINGS_MODULE=core.settings"
 
 ExecStart=/home/deploy/relatoriocep/backend/venv/bin/gunicorn \
     core.wsgi:application \
