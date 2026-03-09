@@ -14,6 +14,7 @@ Funcionalidades:
 
 import json
 import logging
+import re
 
 import pandas as pd
 from django.conf import settings
@@ -187,8 +188,6 @@ def analyze(
 
 def _extract_chart_configs(text: str) -> list[dict]:
     """Extrai blocos ```chart_config ... ``` da resposta da IA."""
-    import re
-
     pattern = r"```chart_config\s*([\s\S]*?)```"
     matches = re.findall(pattern, text)
 
@@ -207,6 +206,4 @@ def _extract_chart_configs(text: str) -> list[dict]:
 
 def _remove_chart_config_block(text: str) -> str:
     """Remove blocos chart_config do texto para exibição limpa."""
-    import re
-
     return re.sub(r"```chart_config\s*[\s\S]*?```", "", text).strip()

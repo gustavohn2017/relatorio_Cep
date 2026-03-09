@@ -9,10 +9,10 @@ Inclui:
   - Sistema de e-mail para recuperação de conta
 """
 
-import os
 from pathlib import Path
 from datetime import timedelta
 
+import dj_database_url
 from decouple import config, Csv
 
 # -------------------------------------------------------
@@ -88,8 +88,6 @@ WSGI_APPLICATION = "core.wsgi.application"
 # -------------------------------------------------------
 # Banco de dados
 # -------------------------------------------------------
-import dj_database_url
-
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",

@@ -312,14 +312,12 @@ class MeView(APIView):
     def get(self, request):
         try:
             profile = request.user.profile
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except Exception as e:
-            logger.exception("Erro ao buscar perfil")
-            return Response(
-                {"detail": "Erro ao carregar perfil."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        except Profile.DoesNotExist:
+            # Cria perfil automaticamente se não existir
+            profile = Profile.objects.create(user=request.user)
+
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
 
 
 # -------------------------------------------------------

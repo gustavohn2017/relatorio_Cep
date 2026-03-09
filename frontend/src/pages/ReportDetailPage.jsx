@@ -16,6 +16,7 @@ export default function ReportDetailPage() {
   const navigate = useNavigate();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -27,11 +28,16 @@ export default function ReportDetailPage() {
 
   const fetchReport = async () => {
     setLoading(true);
+    setError("");
     try {
       const { data } = await api.get(`/reports/history/${id}/`);
       setReport(data);
-    } catch {
-      navigate("/history");
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setError("Relatório não encontrado.");
+      } else {
+        setError(err.response?.data?.detail || "Erro ao carregar relatório.");
+      }
     } finally {
       setLoading(false);
     }
@@ -43,7 +49,14 @@ export default function ReportDetailPage() {
     );
   }
 
-  if (!report) return null;
+  if (!report) {
+    return (
+      <div className="space-y-4">
+        <Link to="/history" className="inline-flex items-center gap-1 text-sm text-brand-500 hover:text-brand-700"><HiArrowLeft size={16} /> Voltar ao histórico</Link>
+        {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

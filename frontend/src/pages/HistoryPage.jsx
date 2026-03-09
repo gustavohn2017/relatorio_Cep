@@ -13,6 +13,7 @@ export default function HistoryPage() {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -24,11 +25,12 @@ export default function HistoryPage() {
 
   const fetchReports = async () => {
     setLoading(true);
+    setError("");
     try {
       const { data } = await api.get("/reports/history/");
       setReports(data.results || data);
-    } catch {
-      /* vazio */
+    } catch (err) {
+      setError(err.response?.data?.detail || "Erro ao carregar histórico. Verifique sua conexão.");
     } finally {
       setLoading(false);
     }
@@ -39,8 +41,8 @@ export default function HistoryPage() {
     try {
       await api.delete(`/reports/history/${id}/`);
       setReports(reports.filter((r) => r.id !== id));
-    } catch {
-      /* vazio */
+    } catch (err) {
+      setError(err.response?.data?.detail || "Erro ao excluir relatório. Tente novamente.");
     }
   };
 
@@ -55,6 +57,10 @@ export default function HistoryPage() {
       <h1 className="text-2xl font-bold text-brand-900">
         Histórico de Análises
       </h1>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>
+      )}
 
       {reports.length === 0 ? (
         <div className="text-center py-16 text-brand-400">
