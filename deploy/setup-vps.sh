@@ -59,6 +59,11 @@ if ! id -u deploy &>/dev/null; then
     usermod -aG www-data deploy
 fi
 
+cat > /etc/sudoers.d/relatoriocep-deploy << 'EOF'
+deploy ALL=(root) NOPASSWD: /bin/systemctl restart relatoriocep, /bin/systemctl status relatoriocep, /bin/journalctl -u relatoriocep
+EOF
+chmod 440 /etc/sudoers.d/relatoriocep-deploy
+
 # 4. Configurar PostgreSQL
 echo "[4/9] Configurando PostgreSQL..."
 DB_PASSWORD=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 32)

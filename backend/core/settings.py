@@ -180,6 +180,18 @@ GOOGLE_CREDENTIALS_FILE = config(
 )
 
 # -------------------------------------------------------
+# OAuth — Login social (Google / Microsoft)
+# -------------------------------------------------------
+GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID", default="")
+GOOGLE_OAUTH_CLIENT_SECRET = config("GOOGLE_OAUTH_CLIENT_SECRET", default="")
+
+MICROSOFT_OAUTH_CLIENT_ID = config("MICROSOFT_OAUTH_CLIENT_ID", default="")
+MICROSOFT_OAUTH_CLIENT_SECRET = config("MICROSOFT_OAUTH_CLIENT_SECRET", default="")
+
+# URL do frontend (usado em links de e-mail e redirect OAuth)
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:5173")
+
+# -------------------------------------------------------
 # Groq AI — chave de API
 # -------------------------------------------------------
 GROQ_API_KEY = config("GROQ_API_KEY", default="")

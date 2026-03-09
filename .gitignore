@@ -37,3 +37,6 @@ frontend/dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Nested duplicate
+relatorio_Cep/

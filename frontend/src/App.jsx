@@ -11,6 +11,7 @@ import PasswordResetPage from "./pages/PasswordResetPage";
 import PasswordResetConfirmPage from "./pages/PasswordResetConfirmPage";
 import HistoryPage from "./pages/HistoryPage";
 import ReportDetailPage from "./pages/ReportDetailPage";
+import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/password-reset" element={<PasswordResetPage />} />
         <Route path="/reset-password/:uid/:token" element={<PasswordResetConfirmPage />} />
+        <Route path="/auth/callback" element={<OAuthCallbackPage />} />
 
         {/* Histórico (requer login) */}
         <Route path="/history" element={<HistoryPage />} />

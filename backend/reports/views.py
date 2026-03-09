@@ -89,7 +89,7 @@ class GoogleSheetsTabsView(APIView):
 
         url = serializer.validated_data["url"]
         try:
-            tabs = google_sheets.list_tabs(url)
+            tabs = google_sheets.list_tabs(url, user=request.user)
         except Exception as e:
             logger.error("Erro ao listar abas: %s", e)
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -150,7 +150,7 @@ class AnalyzeView(APIView):
         for i, url in enumerate(source_urls):
             tab = sheet_tabs[i] if i < len(sheet_tabs) else None
             try:
-                df = google_sheets.read_tab_as_dataframe(url, tab_name=tab or None)
+                df = google_sheets.read_tab_as_dataframe(url, tab_name=tab or None, user=request.user)
                 dataframes.append(df)
                 name = f"Google Sheets ({tab or 'aba principal'})"
                 source_names.append(name)

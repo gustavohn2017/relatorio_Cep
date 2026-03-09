@@ -1,7 +1,7 @@
 /**
  * AuthContext.jsx — Context global de autenticação.
  *
- * Gerencia login, logout, registro e dados do usuário.
+ * Gerencia login (tradicional + social), logout, registro e dados do usuário.
  * Armazena tokens JWT no localStorage.
  */
 
@@ -9,6 +9,41 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 import api from "../api";
 
 const AuthContext = createContext(null);
+
+// URLs OAuth (construídas com variáveis de ambiente)
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const MICROSOFT_CLIENT_ID = import.meta.env.VITE_MICROSOFT_CLIENT_ID || "";
+
+export function getGoogleAuthUrl() {
+  const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
+  const scope = encodeURIComponent(
+    "openid email profile https://www.googleapis.com/auth/spreadsheets.readonly"
+  );
+  return (
+    `https://accounts.google.com/o/oauth2/v2/auth` +
+    `?client_id=${GOOGLE_CLIENT_ID}` +
+    `&redirect_uri=${redirectUri}` +
+    `&response_type=code` +
+    `&scope=${scope}` +
+    `&access_type=offline` +
+    `&prompt=consent` +
+    `&state=google`
+  );
+}
+
+export function getMicrosoftAuthUrl() {
+  const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
+  const scope = encodeURIComponent("openid email profile User.Read");
+  return (
+    `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` +
+    `?client_id=${MICROSOFT_CLIENT_ID}` +
+    `&redirect_uri=${redirectUri}` +
+    `&response_type=code` +
+    `&scope=${scope}` +
+    `&response_mode=query` +
+    `&state=microsoft`
+  );
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -25,7 +60,6 @@ export function AuthProvider({ children }) {
       const { data } = await api.get("/auth/me/");
       setUser(data.user);
     } catch {
-      // Token inválido
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       setUser(null);
@@ -38,7 +72,7 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, [fetchUser]);
 
-  // Login
+  // Login tradicional
   const login = async (username, password) => {
     const { data } = await api.post("/auth/token/", { username, password });
     localStorage.setItem("access_token", data.access);
@@ -46,7 +80,19 @@ export function AuthProvider({ children }) {
     await fetchUser();
   };
 
-  // Registro
+  // Login social — troca authorization code por JWT
+  const socialLogin = async (provider, code) => {
+    const redirectUri = window.location.origin + "/auth/callback";
+    const { data } = await api.post(`/auth/social/${provider}/`, {
+      code,
+      redirect_uri: redirectUri,
+    });
+    localStorage.setItem("access_token", data.access);
+    localStorage.setItem("refresh_token", data.refresh);
+    await fetchUser();
+  };
+
+  // Registro tradicional
   const register = async (username, email, password, passwordConfirm) => {
     await api.post("/auth/register/", {
       username,
@@ -54,7 +100,6 @@ export function AuthProvider({ children }) {
       password,
       password_confirm: passwordConfirm,
     });
-    // Faz login automaticamente após registro
     await login(username, password);
   };
 
@@ -66,7 +111,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, socialLogin, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

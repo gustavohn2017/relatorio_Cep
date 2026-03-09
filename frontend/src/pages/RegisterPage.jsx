@@ -1,10 +1,12 @@
 /**
- * RegisterPage.jsx — Tela de cadastro de novo usuário.
+ * RegisterPage.jsx — Tela de cadastro de novo usuário (tradicional + social).
  */
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, getGoogleAuthUrl, getMicrosoftAuthUrl } from "../context/AuthContext";
+import { FcGoogle } from "react-icons/fc";
+import { BsMicrosoft } from "react-icons/bs";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -33,7 +35,6 @@ export default function RegisterPage() {
     } catch (err) {
       const data = err.response?.data;
       if (data && typeof data === "object" && !Array.isArray(data)) {
-        // Erros de validação do DRF (campo: [mensagens])
         const msgs = Object.entries(data)
           .map(([key, val]) => {
             const label = key === "detail" ? "" : `${key}: `;
@@ -60,6 +61,31 @@ export default function RegisterPage() {
           <p className="text-sm text-brand-400 mt-1">
             Cadastre-se para salvar seu histórico de análises
           </p>
+        </div>
+
+        {/* Botões de cadastro social */}
+        <div className="space-y-3">
+          <a
+            href={getGoogleAuthUrl()}
+            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
+          >
+            <FcGoogle size={20} />
+            Cadastrar com Google
+          </a>
+          <a
+            href={getMicrosoftAuthUrl()}
+            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
+          >
+            <BsMicrosoft size={18} className="text-[#00a4ef]" />
+            Cadastrar com Microsoft
+          </a>
+        </div>
+
+        {/* Separador */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-brand-200" />
+          <span className="text-xs text-brand-400">ou</span>
+          <div className="flex-1 h-px bg-brand-200" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -18,4 +18,7 @@ urlpatterns = [
     # Recuperação de senha
     path("password-reset/", views.PasswordResetRequestView.as_view(), name="password_reset"),
     path("password-reset-confirm/", views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    # Login social
+    path("social/google/", views.GoogleLoginView.as_view(), name="social_google"),
+    path("social/microsoft/", views.MicrosoftLoginView.as_view(), name="social_microsoft"),
 ]

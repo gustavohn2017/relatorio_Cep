@@ -11,6 +11,11 @@ import axios from "axios";
 // Em dev, o Vite proxy redireciona /api para localhost:8000.
 const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
+const refreshClient = axios.create({
+  baseURL: API_BASE,
+  headers: { "Content-Type": "application/json" },
+});
+
 const api = axios.create({
   baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
@@ -37,7 +42,7 @@ api.interceptors.response.use(
 
       if (refresh) {
         try {
-          const { data } = await axios.post("/api/auth/token/refresh/", {
+          const { data } = await refreshClient.post("/auth/token/refresh/", {
             refresh,
           });
           localStorage.setItem("access_token", data.access);

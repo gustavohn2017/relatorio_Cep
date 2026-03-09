@@ -23,6 +23,10 @@ npm install --silent
 npm run build
 
 echo ">>> Reiniciando Gunicorn..."
-sudo systemctl restart relatoriocep
+if [ "$(id -u)" -eq 0 ]; then
+	systemctl restart relatoriocep
+else
+	sudo systemctl restart relatoriocep
+fi
 
 echo ">>> Atualização concluída!"

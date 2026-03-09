@@ -1,10 +1,12 @@
 /**
- * LoginPage.jsx — Tela de login.
+ * LoginPage.jsx — Tela de login (tradicional + social).
  */
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, getGoogleAuthUrl, getMicrosoftAuthUrl } from "../context/AuthContext";
+import { FcGoogle } from "react-icons/fc";
+import { BsMicrosoft } from "react-icons/bs";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -44,6 +46,31 @@ export default function LoginPage() {
           <p className="text-sm text-brand-400 mt-1">
             Acesse sua conta para ver seu histórico
           </p>
+        </div>
+
+        {/* Botões de login social */}
+        <div className="space-y-3">
+          <a
+            href={getGoogleAuthUrl()}
+            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
+          >
+            <FcGoogle size={20} />
+            Continuar com Google
+          </a>
+          <a
+            href={getMicrosoftAuthUrl()}
+            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
+          >
+            <BsMicrosoft size={18} className="text-[#00a4ef]" />
+            Continuar com Microsoft
+          </a>
+        </div>
+
+        {/* Separador */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-brand-200" />
+          <span className="text-xs text-brand-400">ou</span>
+          <div className="flex-1 h-px bg-brand-200" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
