@@ -4,9 +4,8 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth, getGoogleAuthUrl, getMicrosoftAuthUrl } from "../context/AuthContext";
+import { useAuth, getGoogleAuthUrl } from "../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
-import { BsMicrosoft } from "react-icons/bs";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -71,13 +70,6 @@ export default function RegisterPage() {
           >
             <FcGoogle size={20} />
             Cadastrar com Google
-          </a>
-          <a
-            href={getMicrosoftAuthUrl()}
-            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
-          >
-            <BsMicrosoft size={18} className="text-[#00a4ef]" />
-            Cadastrar com Microsoft
           </a>
         </div>
 

@@ -9,7 +9,6 @@ Endpoints:
   POST /api/auth/password-reset/          → Envia e-mail de recuperação
   POST /api/auth/password-reset-confirm/  → Confirma nova senha
   POST /api/auth/social/google/           → Login/cadastro via Google
-  POST /api/auth/social/microsoft/        → Login/cadastro via Microsoft
 """
 
 import logging
@@ -182,94 +181,6 @@ class GoogleLoginView(APIView):
             access_token=g_access,
             refresh_token=g_refresh,
             expires_in=expires_in,
-        )
-
-        return Response(_jwt_for_user(user), status=status.HTTP_200_OK)
-
-
-# -------------------------------------------------------
-# Login Social — Microsoft
-# -------------------------------------------------------
-class MicrosoftLoginView(APIView):
-    """Recebe authorization code da Microsoft, troca por tokens,
-    consulta MS Graph /me, cria ou vincula usuário e retorna JWT."""
-
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        code = request.data.get("code")
-        redirect_uri = request.data.get("redirect_uri", "")
-
-        if not code:
-            return Response(
-                {"detail": "Código de autorização é obrigatório."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Trocar code por tokens
-        try:
-            token_resp = http_requests.post(
-                "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-                data={
-                    "code": code,
-                    "client_id": settings.MICROSOFT_OAUTH_CLIENT_ID,
-                    "client_secret": settings.MICROSOFT_OAUTH_CLIENT_SECRET,
-                    "redirect_uri": redirect_uri,
-                    "grant_type": "authorization_code",
-                    "scope": "openid email profile User.Read",
-                },
-                timeout=15,
-            )
-        except http_requests.RequestException:
-            return Response(
-                {"detail": "Erro de comunicação com a Microsoft."},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
-
-        if token_resp.status_code != 200:
-            logger.error("Microsoft token exchange failed: %s", token_resp.text)
-            return Response(
-                {"detail": "Falha ao trocar código de autorização da Microsoft."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        ms_access = token_resp.json().get("access_token", "")
-
-        # Obter dados do usuário via MS Graph
-        try:
-            graph_resp = http_requests.get(
-                "https://graph.microsoft.com/v1.0/me",
-                headers={"Authorization": f"Bearer {ms_access}"},
-                timeout=10,
-            )
-        except http_requests.RequestException:
-            return Response(
-                {"detail": "Erro ao consultar perfil Microsoft."},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
-
-        if graph_resp.status_code != 200:
-            return Response(
-                {"detail": "Não foi possível obter dados do perfil Microsoft."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        info = graph_resp.json()
-        email = info.get("mail") or info.get("userPrincipalName", "")
-        name = info.get("displayName", "")
-        ms_uid = info.get("id")
-
-        if not email:
-            return Response(
-                {"detail": "E-mail não disponível na conta Microsoft."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user = _find_or_create_user(
-            email=email,
-            name=name,
-            provider="microsoft",
-            provider_uid=ms_uid,
         )
 
         return Response(_jwt_for_user(user), status=status.HTTP_200_OK)

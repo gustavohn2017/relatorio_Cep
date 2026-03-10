@@ -35,7 +35,6 @@ class SocialAccount(models.Model):
 
     PROVIDER_CHOICES = [
         ("google", "Google"),
-        ("microsoft", "Microsoft"),
     ]
 
     user = models.ForeignKey(

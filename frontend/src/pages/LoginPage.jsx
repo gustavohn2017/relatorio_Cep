@@ -4,9 +4,8 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth, getGoogleAuthUrl, getMicrosoftAuthUrl } from "../context/AuthContext";
+import { useAuth, getGoogleAuthUrl } from "../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
-import { BsMicrosoft } from "react-icons/bs";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -56,13 +55,6 @@ export default function LoginPage() {
           >
             <FcGoogle size={20} />
             Continuar com Google
-          </a>
-          <a
-            href={getMicrosoftAuthUrl()}
-            className="w-full flex items-center justify-center gap-3 py-2.5 border border-brand-300 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition"
-          >
-            <BsMicrosoft size={18} className="text-[#00a4ef]" />
-            Continuar com Microsoft
           </a>
         </div>
 

@@ -12,7 +12,6 @@ const AuthContext = createContext(null);
 
 // URLs OAuth (construídas com variáveis de ambiente)
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
-const MICROSOFT_CLIENT_ID = import.meta.env.VITE_MICROSOFT_CLIENT_ID || "";
 
 export function getGoogleAuthUrl() {
   const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
@@ -28,20 +27,6 @@ export function getGoogleAuthUrl() {
     `&access_type=offline` +
     `&prompt=consent` +
     `&state=google`
-  );
-}
-
-export function getMicrosoftAuthUrl() {
-  const redirectUri = encodeURIComponent(window.location.origin + "/auth/callback");
-  const scope = encodeURIComponent("openid email profile User.Read");
-  return (
-    `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` +
-    `?client_id=${MICROSOFT_CLIENT_ID}` +
-    `&redirect_uri=${redirectUri}` +
-    `&response_type=code` +
-    `&scope=${scope}` +
-    `&response_mode=query` +
-    `&state=microsoft`
   );
 }
 
